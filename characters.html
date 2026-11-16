@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Locker - Adhithyan Fart Bird</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .preview-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 24px;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        #previewCanvas {
+            border: 3px solid #fff;
+            border-radius: 50%;
+            background: #87CEEB;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+        }
+
+        .custom-upload-box {
+            border: 2px dashed var(--primary);
+            background: rgba(46, 204, 113, 0.05);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="arcade-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span>💨</span> ADHITHYAN FART BIRD
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="play.html" class="nav-link">🎮 Play</a></li>
+                <li><a href="leaderboard.html" class="nav-link">🏆 High Scores</a></li>
+                <li><a href="characters.html" class="nav-link active">👕 Locker</a></li>
+                <li><a href="shop.html" class="nav-link">🛒 Shop</a></li>
+                <li><a href="achievements.html" class="nav-link">🎖️ Badges</a></li>
+                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="coin-chip">
+                    🪙 <span class="user-coin-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE WRAPPER -->
+    <div class="page-wrapper">
+        <div class="page-header">
+            <h1 class="page-title">👕 Character Locker</h1>
+            <p class="page-subtitle">Choose your flying persona or upload a custom face photo to propel yourself with glorious flatulence!</p>
+        </div>
+
+        <!-- LIVE PREVIEW CONTAINER -->
+        <div class="preview-box">
+            <canvas id="previewCanvas" width="120" height="120"></canvas>
+            <div>
+                <h3 id="currentSkinName" style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--accent); margin-bottom: 4px;">
+                    Classic Adhithyan
+                </h3>
+                <p id="currentSkinDesc" style="color: var(--text-muted); font-size: 0.95rem; max-width: 400px; margin-bottom: 12px;">
+                    The OG aeronaut of gas propulsion.
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <a href="play.html" class="btn btn-primary btn-sm">🎮 PLAY WITH THIS SKIN</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKINS GRID -->
+        <div class="grid-3" id="skinsGrid">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- CUSTOM FACE UPLOADER SECTION -->
+        <div class="custom-upload-box">
+            <h2 class="page-title" style="font-size: 1.6rem; color: var(--primary);">📷 Upload Your Own Face / Friend's Face</h2>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 16px auto; font-size: 0.95rem;">
+                Select any photo from your computer or phone! It will be automatically trimmed into a flying circular pilot head and saved in your browser.
+            </p>
+            <input type="file" id="faceUploadInput" accept="image/*" style="display: none;">
+            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="document.getElementById('faceUploadInput').click()">
+                    📁 CHOOSE PHOTO
+                </button>
+                <button id="resetCustomFaceBtn" class="btn btn-outline" style="display: none;">
+                    RESET TO DEFAULT
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="arcade-footer">
+        <p><strong>💨 Adhithyan Fart Bird</strong> • Character Wardrobe</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="js/state.js"></script>
+    <script src="js/audio.js"></script>
+    <script>
+        let previewAnimFrame = null;
+        let previewImg = new Image();
+        let previewImgLoaded = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSkins();
+            initCustomUpload();
+            initPreview();
+        });
+
+        function renderSkins() {
+            const grid = document.getElementById('skinsGrid');
+            grid.innerHTML = '';
+
+            const state = window.gameState.data;
+            const skins = state.skins;
+            const equippedId = state.equippedSkin;
+
+            Object.values(skins).forEach(skin => {
+                const isEquipped = skin.id === equippedId;
+                const card = document.createElement('div');
+                card.className = `item-card ${isEquipped ? 'equipped' : ''}`;
+
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = `<button class="btn btn-primary btn-sm" disabled style="width: 100%;">EQUIPPED ✓</button>`;
+                } else if (skin.unlocked) {
+                    btnHtml = `<button class="btn btn-outline btn-sm" style="width: 100%;" onclick="equipSkin('${skin.id}')">EQUIP</button>`;
+                } else {
+                    btnHtml = `
+                        <button class="btn btn-gold btn-sm" style="width: 100%;" onclick="buySkin('${skin.id}')">
+                            UNLOCK (🪙 ${skin.price})
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="item-icon-box">${skin.icon || '💨'}</div>
+                        <h4 class="item-title">${skin.name}</h4>
+                        <p class="item-desc">${skin.desc}</p>
+                    </div>
+                    <div>${btnHtml}</div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            // Update preview details
+            const current = skins[equippedId] || skins.adhithyan;
+            document.getElementById('currentSkinName').innerText = current.name;
+            document.getElementById('currentSkinDesc').innerText = current.desc;
+        }
+
+        function equipSkin(id) {
+            window.gameState.data.equippedSkin = id;
+            window.gameState.save();
+            window.fartAudio.playFart();
+            renderSkins();
+            updatePreviewImage();
+        }
+
+        function buySkin(id) {
+            const skin = window.gameState.data.skins[id];
+            if (!skin) return;
+
+            if (window.gameState.spendCoins(skin.price)) {
+                skin.unlocked = true;
+                window.gameState.data.equippedSkin = id;
+                window.gameState.checkAchievement('shopper', true);
+                window.gameState.save();
+                window.fartAudio.playFanfare();
+                alert(`🎉 You unlocked and equipped ${skin.name}!`);
+                renderSkins();
+                updatePreviewImage();
+            } else {
+                alert(`❌ Not enough Fart Coins! You need ${skin.price} coins, but only have ${window.gameState.data.coins}.`);
+            }
+        }
+
+        function initCustomUpload() {
+            const input = document.getElementById('faceUploadInput');
+            const resetBtn = document.getElementById('resetCustomFaceBtn');
+
+            if (window.gameState.data.customAvatar) {
+                resetBtn.style.display = 'inline-flex';
+            }
+
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const dataUrl = event.target.result;
+                        window.gameState.data.customAvatar = dataUrl;
+                        window.gameState.data.equippedSkin = 'custom';
+                        window.gameState.checkAchievement('custom_avatar', true);
+                        window.gameState.save();
+                        window.fartAudio.playFanfare();
+                        resetBtn.style.display = 'inline-flex';
+                        alert('📷 Custom face uploaded and equipped successfully!');
+                        renderSkins();
+                        updatePreviewImage();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            resetBtn.addEventListener('click', () => {
+                window.gameState.data.customAvatar = null;
+                window.gameState.data.equippedSkin = 'adhithyan';
+                window.gameState.save();
+                resetBtn.style.display = 'none';
+                renderSkins();
+                updatePreviewImage();
+            });
+        }
+
+        function updatePreviewImage() {
+            if (window.gameState.data.customAvatar) {
+                previewImg.src = window.gameState.data.customAvatar;
+                previewImg.onload = () => { previewImgLoaded = true; };
+            } else {
+                previewImg.src = 'man.png';
+                previewImg.onload = () => {
+                    previewImgLoaded = previewImg.naturalWidth > 0;
+                };
+            }
+        }
+
+        function initPreview() {
+            const canvas = document.getElementById('previewCanvas');
+            const ctx = canvas.getContext('2d');
+            updatePreviewImage();
+
+            let frame = 0;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const skinId = window.gameState.data.equippedSkin;
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const r = 40;
+
+                ctx.save();
+                ctx.translate(cx, cy + Math.sin(frame * 0.08) * 3);
+
+                if (skinId === 'custom' && previewImgLoaded) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r, 0, Math.PI * 2);
+                    ctx.clip();
+                    ctx.drawImage(previewImg, -r, -r, r * 2, r * 2);
+                } else {
+                    let faceColor = '#ffcc80';
+                    let capeColor = '#e74c3c';
+                    if (skinId === 'taco') { faceColor = '#f39c12'; capeColor = '#c0392b'; }
+                    else if (skinId === 'golden') { faceColor = '#f1c40f'; capeColor = '#d4ac0d'; }
+                    else if (skinId === 'cyber') { faceColor = '#95a5a6'; capeColor = '#00d2d3'; }
+
+                    // Cape
+                    ctx.fillStyle = capeColor;
+                    ctx.beginPath();
+                    ctx.moveTo(-r * 0.3, r * 0.2);
+                    ctx.lineTo(-r * 1.1, r * 0.6 + Math.sin(frame * 0.2) * 5);
+                    ctx.lineTo(-r * 0.7, -r * 0.2);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Head
+                    ctx.fillStyle = faceColor;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r * 0.85, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#3a200a';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Eyes
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(-r * 0.3, -r * 0.1, r * 0.2, 0, Math.PI * 2);
+                    ctx.arc(r * 0.3, -r * 0.1, r * 0.2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Pupils
+                    ctx.fillStyle = '#000';
+                    ctx.beginPath();
+                    ctx.arc(-r * 0.25, -r * 0.1, r * 0.08, 0, Math.PI * 2);
+                    ctx.arc(r * 0.35, -r * 0.1, r * 0.08, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+                frame++;
+                previewAnimFrame = requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>

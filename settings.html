@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings &amp; Audio Lab - Adhithyan Fart Bird</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="arcade-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span>💨</span> ADHITHYAN FART BIRD
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="play.html" class="nav-link">🎮 Play</a></li>
+                <li><a href="leaderboard.html" class="nav-link">🏆 High Scores</a></li>
+                <li><a href="characters.html" class="nav-link">👕 Locker</a></li>
+                <li><a href="shop.html" class="nav-link">🛒 Shop</a></li>
+                <li><a href="achievements.html" class="nav-link">🎖️ Badges</a></li>
+                <li><a href="settings.html" class="nav-link active">⚙️ Settings</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="coin-chip">
+                    🪙 <span class="user-coin-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE WRAPPER -->
+    <div class="page-wrapper">
+        <div class="page-header">
+            <h1 class="page-title">⚙️ Audio Lab &amp; Game Settings</h1>
+            <p class="page-subtitle">Fine-tune the procedural sound synthesizer, adjust game options, and manage your saved progress.</p>
+        </div>
+
+        <div class="grid-2">
+            
+            <!-- AUDIO LAB CARD -->
+            <div class="arcade-card">
+                <h2 class="page-title" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 16px;">🔬 Fart Synthesizer Lab</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">
+                        FART TONE &amp; ACOUSTIC PROFILE
+                    </label>
+                    <select id="pitchSelect" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 1rem;">
+                        <option value="balanced">💨 Balanced (Classic Flap)</option>
+                        <option value="deep">🦏 Deep Bass Rumble (Subwoofer Rattler)</option>
+                        <option value="squeaky">🐭 High-Pitch Squeak (Balloon Deflation)</option>
+                        <option value="wet">🌊 Wet Splatter (Spicy Residue)</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">
+                        MASTER AUDIO VOLUME (<span id="volumeReadout">80%</span>)
+                    </label>
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" style="width: 100%; accent-color: var(--primary);">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap;">
+                    <button id="testFartBtn" class="btn btn-primary" style="flex: 1;">
+                        🔊 TEST FART BLAST
+                    </button>
+                    <button id="testTacoBtn" class="btn btn-secondary" style="flex: 1;">
+                        🌮 TEST TACO BLAST
+                    </button>
+                </div>
+            </div>
+
+            <!-- GAMEPLAY & DATA MANAGEMENT -->
+            <div class="arcade-card">
+                <h2 class="page-title" style="font-size: 1.5rem; color: var(--secondary); margin-bottom: 16px;">💾 Progress &amp; Developer Tools</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px;">
+                        Need quick coins to test out all skins, trails, and upgrades? Claim a free developer grant:
+                    </p>
+                    <button id="grantCoinsBtn" class="btn btn-gold btn-sm" style="width: 100%;">
+                        🪙 ADD +250 FREE TEST COINS
+                    </button>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 24px 0;">
+
+                <div>
+                    <h4 style="color: var(--danger); font-family: var(--font-heading); margin-bottom: 8px;">DANGER ZONE</h4>
+                    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 14px;">
+                        Reset all high scores, coins, unlocked characters, and badges back to factory defaults.
+                    </p>
+                    <button id="resetAllBtn" class="btn btn-danger btn-sm" style="width: 100%;">
+                        ⚠️ RESET ALL SAVED DATA
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="arcade-footer">
+        <p><strong>💨 Adhithyan Fart Bird</strong> • Settings</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="js/state.js"></script>
+    <script src="js/audio.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const settings = window.gameState.data.settings;
+
+            // Pitch Select
+            const pitchSelect = document.getElementById('pitchSelect');
+            pitchSelect.value = settings.fartPitch || 'balanced';
+            pitchSelect.addEventListener('change', (e) => {
+                settings.fartPitch = e.target.value;
+                window.gameState.save();
+                window.fartAudio.playFart();
+            });
+
+            // Volume Slider
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeReadout = document.getElementById('volumeReadout');
+            volumeSlider.value = settings.volume || 0.8;
+            volumeReadout.innerText = `${Math.round(volumeSlider.value * 100)}%`;
+
+            volumeSlider.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                settings.volume = val;
+                volumeReadout.innerText = `${Math.round(val * 100)}%`;
+                window.gameState.save();
+            });
+
+            // Sound Testing
+            document.getElementById('testFartBtn').addEventListener('click', () => {
+                window.fartAudio.playFart();
+            });
+            document.getElementById('testTacoBtn').addEventListener('click', () => {
+                window.fartAudio.playTacoBlast();
+            });
+
+            // Grant Coins
+            document.getElementById('grantCoinsBtn').addEventListener('click', () => {
+                window.gameState.addCoins(250);
+                window.fartAudio.playFanfare();
+                alert('🪙 Added 250 Fart Coins to your balance!');
+            });
+
+            // Reset All
+            document.getElementById('resetAllBtn').addEventListener('click', () => {
+                if (confirm('Are you absolutely sure you want to reset all game data, coins, and unlocks?')) {
+                    window.gameState.resetAllData();
+                    location.reload();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements &amp; Badges - Adhithyan Fart Bird</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .progress-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(0,0,0,0.4);
+            height: 18px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="arcade-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span>💨</span> ADHITHYAN FART BIRD
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="play.html" class="nav-link">🎮 Play</a></li>
+                <li><a href="leaderboard.html" class="nav-link">🏆 High Scores</a></li>
+                <li><a href="characters.html" class="nav-link">👕 Locker</a></li>
+                <li><a href="shop.html" class="nav-link">🛒 Shop</a></li>
+                <li><a href="achievements.html" class="nav-link active">🎖️ Badges</a></li>
+                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="coin-chip">
+                    🪙 <span class="user-coin-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE WRAPPER -->
+    <div class="page-wrapper">
+        <div class="page-header">
+            <h1 class="page-title">🎖️ Trophies &amp; Milestones</h1>
+            <p class="page-subtitle">Complete flatulence challenges to earn bonus Fart Coins and solidify your legend!</p>
+        </div>
+
+        <!-- PROGRESS BOX -->
+        <div class="progress-box">
+            <div>
+                <span style="font-family: var(--font-heading); font-size: 1.3rem;" id="progressText">0 of 10 Unlocked</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div>
+                <a href="play.html" class="btn btn-primary btn-sm">🎮 PLAY NOW</a>
+            </div>
+        </div>
+
+        <!-- ACHIEVEMENTS LIST -->
+        <div style="display: flex; flex-direction: column; gap: 12px;" id="achList">
+            <!-- Dynamically populated -->
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="arcade-footer">
+        <p><strong>💨 Adhithyan Fart Bird</strong> • Achievement System</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="js/state.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAchievements();
+        });
+
+        function renderAchievements() {
+            const listEl = document.getElementById('achList');
+            listEl.innerHTML = '';
+
+            const list = window.gameState.data.achievements || [];
+            let unlockedCount = 0;
+
+            list.forEach(ach => {
+                if (ach.unlocked) unlockedCount++;
+
+                const div = document.createElement('div');
+                div.className = `ach-item ${ach.unlocked ? 'unlocked' : 'locked'}`;
+
+                div.innerHTML = `
+                    <div class="ach-icon">${ach.icon || '🎖️'}</div>
+                    <div class="ach-info">
+                        <div class="ach-title">
+                            ${ach.title}
+                            ${ach.unlocked ? '<span style="color: var(--primary); font-size: 0.9rem;">✓ UNLOCKED</span>' : ''}
+                        </div>
+                        <div class="ach-desc">${ach.desc}</div>
+                    </div>
+                    <div class="ach-reward">
+                        🪙 +${ach.reward}
+                    </div>
+                `;
+
+                listEl.appendChild(div);
+            });
+
+            // Update Progress
+            const pct = Math.round((unlockedCount / list.length) * 100);
+            document.getElementById('progressText').innerText = `${unlockedCount} of ${list.length} Badges (${pct}%)`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+    </script>
+</body>
+</html>

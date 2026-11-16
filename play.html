@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Play Game - Adhithyan Fart Bird</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .game-screen-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .arena-container {
+            position: relative;
+            width: 400px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        #gameCanvas {
+            width: 400px;
+            height: 500px;
+            max-width: 100%;
+            border: 4px solid #fff;
+            border-radius: var(--radius-md);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            cursor: pointer;
+            touch-action: manipulation;
+            display: block;
+        }
+
+        .control-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* MODALS & OVERLAYS */
+        .game-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(14, 16, 21, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius-md);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            z-index: 100;
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            color: var(--danger);
+            text-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+            margin-bottom: 6px;
+        }
+
+        .modal-stat-box {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 14px 20px;
+            width: 100%;
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .modal-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .modal-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .modal-stat-num {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            color: var(--accent);
+        }
+
+        .player-name-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1.05rem;
+            text-align: center;
+            margin-bottom: 12px;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+        }
+
+        .player-name-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="arcade-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span>💨</span> ADHITHYAN FART BIRD
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="play.html" class="nav-link active">🎮 Play</a></li>
+                <li><a href="leaderboard.html" class="nav-link">🏆 High Scores</a></li>
+                <li><a href="characters.html" class="nav-link">👕 Locker</a></li>
+                <li><a href="shop.html" class="nav-link">🛒 Shop</a></li>
+                <li><a href="achievements.html" class="nav-link">🎖️ Badges</a></li>
+                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="coin-chip">
+                    🪙 <span class="user-coin-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE WRAPPER -->
+    <div class="page-wrapper">
+        <div class="game-screen-wrapper">
+            
+            <!-- ARENA CONTAINER -->
+            <div class="arena-container">
+                <canvas id="gameCanvas" width="400" height="500"></canvas>
+
+                <!-- PAUSE OVERLAY -->
+                <div id="pauseOverlay" class="game-modal-overlay">
+                    <h2 class="modal-title" style="color: var(--accent);">⏸️ GAME PAUSED</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">Catch your breath before the next blast.</p>
+                    <button class="btn btn-primary" onclick="game.togglePause()">▶️ RESUME</button>
+                    <a href="index.html" class="btn btn-outline" style="margin-top: 10px;">🏠 QUIT TO HUB</a>
+                </div>
+
+                <!-- GAME OVER MODAL -->
+                <div id="gameOverModal" class="game-modal-overlay">
+                    <h2 class="modal-title">💥 GAME OVER</h2>
+                    
+                    <div id="newRecordAlert" style="display: none; color: var(--primary); font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 4px;">
+                        🎉 NEW HIGH SCORE RECORD! 🎉
+                    </div>
+
+                    <div class="modal-stat-box">
+                        <div class="modal-stat-item">
+                            <span class="modal-stat-label">Adhithyan Farts</span>
+                            <span class="modal-stat-num" id="finalScoreVal">0</span>
+                        </div>
+                        <div class="modal-stat-item">
+                            <span class="modal-stat-label">Coins Found</span>
+                            <span class="modal-stat-num" id="finalCoinsVal" style="color: #f1c40f;">+0</span>
+                        </div>
+                        <div class="modal-stat-item">
+                            <span class="modal-stat-label">Best Record</span>
+                            <span class="modal-stat-num" id="finalBestVal">0</span>
+                        </div>
+                    </div>
+
+                    <!-- LEADERBOARD SUBMISSION FORM -->
+                    <div id="submitSection" style="width: 100%;">
+                        <input type="text" id="playerNameInput" class="player-name-input" placeholder="ENTER YOUR NAME" maxlength="15" value="Adhithyan">
+                        <button id="submitScoreBtn" class="btn btn-gold" style="width: 100%; margin-bottom: 10px;">
+                            🏆 SUBMIT TO TOP SCORES
+                        </button>
+                    </div>
+
+                    <div id="submitSuccessMsg" style="display:none; color: var(--primary); font-family: var(--font-heading); font-size: 1.1rem; margin-bottom: 12px;">
+                        ✓ SCORE RECORDED ON LEADERBOARD!
+                    </div>
+
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <button class="btn btn-primary" style="flex: 1;" onclick="game.restart()">
+                            💨 PLAY AGAIN
+                        </button>
+                        <a href="leaderboard.html" class="btn btn-outline" style="flex: 1;">
+                            🏆 SCORES
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CONTROLS & UTILITIES BAR -->
+            <div class="control-bar" id="inGameUI">
+                <button id="fsBtn" class="btn btn-danger btn-sm">📺 FULLSCREEN</button>
+                <button id="muteBtn" class="btn btn-info btn-sm">🔊 SOUND: ON</button>
+                <button id="pauseBtn" class="btn btn-outline btn-sm" onclick="game.togglePause()">⏸️ PAUSE</button>
+            </div>
+
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 14px; text-align: center;">
+                Tap <strong>SPACEBAR</strong> or <strong>CLICK</strong> screen to fart-propel. Avoid brown pipes!
+            </p>
+
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/state.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/game.js"></script>
+    <script>
+        let game = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            game = new FartBirdGame('gameCanvas');
+
+            // Sound Toggle
+            const muteBtn = document.getElementById('muteBtn');
+            const settings = window.gameState.data.settings;
+            muteBtn.innerText = settings.muted ? '🔇 SOUND: MUTED' : '🔊 SOUND: ON';
+            muteBtn.addEventListener('click', () => {
+                settings.muted = !settings.muted;
+                window.gameState.save();
+                muteBtn.innerText = settings.muted ? '🔇 SOUND: MUTED' : '🔊 SOUND: ON';
+                muteBtn.classList.toggle('btn-info', !settings.muted);
+                muteBtn.classList.toggle('btn-outline', settings.muted);
+            });
+
+            // Fullscreen Toggle
+            const fsBtn = document.getElementById('fsBtn');
+            fsBtn.addEventListener('click', () => {
+                const arena = document.querySelector('.arena-container');
+                if (!document.fullscreenElement) {
+                    arena.requestFullscreen().catch(() => {});
+                    fsBtn.innerText = '📺 EXIT FS';
+                } else {
+                    document.exitFullscreen();
+                    fsBtn.innerText = '📺 FULLSCREEN';
+                }
+            });
+
+            // Submit Score Handler
+            const submitBtn = document.getElementById('submitScoreBtn');
+            const nameInput = document.getElementById('playerNameInput');
+            const submitSection = document.getElementById('submitSection');
+            const successMsg = document.getElementById('submitSuccessMsg');
+
+            submitBtn.addEventListener('click', () => {
+                const name = nameInput.value.trim() || 'Anonymous Farter';
+                const rank = game.submitScore(name);
+                submitSection.style.display = 'none';
+                successMsg.innerHTML = `🎉 RANK #${rank} ON THE LEADERBOARD!`;
+                successMsg.style.display = 'block';
+                window.fartAudio.playFanfare();
+            });
+        });
+    </script>
+</body>
+</html>

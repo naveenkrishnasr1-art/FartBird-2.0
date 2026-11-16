@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adhithyan Fart Bird - Arcade Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="arcade-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span>💨</span> ADHITHYAN FART BIRD
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active">🏠 Home</a></li>
+                <li><a href="play.html" class="nav-link">🎮 Play</a></li>
+                <li><a href="leaderboard.html" class="nav-link">🏆 High Scores</a></li>
+                <li><a href="characters.html" class="nav-link">👕 Locker</a></li>
+                <li><a href="shop.html" class="nav-link">🛒 Shop</a></li>
+                <li><a href="achievements.html" class="nav-link">🎖️ Badges</a></li>
+                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="coin-chip">
+                    🪙 <span class="user-coin-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div class="page-wrapper">
+        
+        <!-- HERO BANNER -->
+        <section class="hero-box">
+            <h1 class="hero-title">💨 Adhithyan Fart Bird</h1>
+            <p class="hero-desc">
+                The premier flatulent flight experience! Harness the raw power of biological propulsion, dodge treacherous pipes, devour spicy tacos for super turbo blasts, and climb to the top of the leaderboard!
+            </p>
+            <div class="hero-actions">
+                <a href="play.html" class="btn btn-primary btn-lg">🎮 PLAY NOW</a>
+                <a href="characters.html" class="btn btn-secondary btn-lg">👕 CUSTOMIZE CHARACTER</a>
+                <a href="leaderboard.html" class="btn btn-gold btn-lg">🏆 TOP SCORES</a>
+            </div>
+
+            <!-- LIVE STATS ROW -->
+            <div class="stat-chip-row">
+                <div class="stat-chip">Best Score: <strong id="heroBestScore">0</strong></div>
+                <div class="stat-chip">Total Farts: <strong id="heroTotalFarts">0</strong></div>
+                <div class="stat-chip">Pipes Cleared: <strong id="heroTotalPipes">0</strong></div>
+                <div class="stat-chip">Games Played: <strong id="heroGamesPlayed">0</strong></div>
+            </div>
+        </section>
+
+        <!-- GRID SECTION -->
+        <div class="grid-3">
+            
+            <!-- DAILY REWARD CARD -->
+            <div class="arcade-card" style="text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 8px;">🎁</div>
+                <h3 class="page-title" style="font-size: 1.4rem;">Daily Gas Gift</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px;">
+                    Claim your daily supply of <strong>50 Fart Coins</strong> to spend on hilarious skins and crazy fart trails!
+                </p>
+                <button id="claimDailyBtn" class="btn btn-primary btn-sm" style="width: 100%;">
+                    CLAIM 50 COINS
+                </button>
+            </div>
+
+            <!-- CURRENT CHARACTER SHOWCASE -->
+            <div class="arcade-card" style="text-align: center;">
+                <div id="heroSkinIcon" style="font-size: 3rem; margin-bottom: 8px;">💨</div>
+                <h3 class="page-title" style="font-size: 1.4rem;" id="heroSkinTitle">Classic Adhithyan</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px;" id="heroSkinDesc">
+                    The OG aeronaut of gas propulsion. Equipped with classic puff trail.
+                </p>
+                <a href="characters.html" class="btn btn-outline btn-sm" style="width: 100%;">
+                    OPEN LOCKER
+                </a>
+            </div>
+
+            <!-- QUICK HIGHEST SCORE PODIUM -->
+            <div class="arcade-card" style="text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 8px;">🥇</div>
+                <h3 class="page-title" style="font-size: 1.4rem;">Top Champion</h3>
+                <div id="champName" style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--accent); margin-bottom: 4px;">
+                    Adhithyan (King)
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px;" id="champScore">
+                    Record: <strong>42 Farts</strong>
+                </p>
+                <a href="leaderboard.html" class="btn btn-outline btn-sm" style="width: 100%;">
+                    FULL LEADERBOARD
+                </a>
+            </div>
+
+        </div>
+
+        <!-- HOW TO PLAY / LORE SECTION -->
+        <div class="arcade-card" style="margin-top: 30px;">
+            <h2 class="page-title" style="font-size: 1.6rem; margin-bottom: 14px;">📖 How To Play &amp; Power-Ups</h2>
+            <div class="grid-3" style="margin-top: 15px;">
+                <div style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: var(--radius-sm);">
+                    <h4 style="font-family: var(--font-heading); color: var(--primary); font-size: 1.1rem; margin-bottom: 6px;">💨 Propel With Gas</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        Press <strong>SPACEBAR</strong> or tap/click to fart-jump. Time your blasts carefully to thread the gaps between brown obstacles!
+                    </p>
+                </div>
+                <div style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: var(--radius-sm);">
+                    <h4 style="font-family: var(--font-heading); color: var(--secondary); font-size: 1.1rem; margin-bottom: 6px;">🌮 Spicy Taco Overdrive</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        Eat floating tacos for fiery invincibility! Blast straight through pipes, double your score, and blaze a path of flame!
+                    </p>
+                </div>
+                <div style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: var(--radius-sm);">
+                    <h4 style="font-family: var(--font-heading); color: var(--info); font-size: 1.1rem; margin-bottom: 6px;">🧯 Gas Mask Shield</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        Grab gas masks floating in the sky to gain an emergency kinetic shield that absorbs one devastating pipe crash.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="arcade-footer">
+        <p><strong>💨 Adhithyan Fart Bird</strong> • Designed &amp; Crafted for Ultimate Flatulent Flight</p>
+        <p style="font-size: 0.8rem; margin-top: 6px; color: #718096;">All sounds synthesized dynamically via Web Audio API. Zero external dependencies required.</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="js/state.js"></script>
+    <script src="js/audio.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const state = window.gameState.data;
+
+            // Update stats
+            document.getElementById('heroBestScore').innerText = state.highScore;
+            document.getElementById('heroTotalFarts').innerText = (state.stats.totalFarts || 0).toLocaleString();
+            document.getElementById('heroTotalPipes').innerText = (state.stats.totalPipes || 0).toLocaleString();
+            document.getElementById('heroGamesPlayed').innerText = (state.stats.gamesPlayed || 0).toLocaleString();
+
+            // Update equipped character
+            const skin = state.skins[state.equippedSkin] || state.skins.adhithyan;
+            document.getElementById('heroSkinTitle').innerText = skin.name;
+            document.getElementById('heroSkinDesc').innerText = skin.desc;
+            document.getElementById('heroSkinIcon').innerText = skin.icon || '💨';
+
+            // Top leaderboard snippet
+            if (state.leaderboard && state.leaderboard.length > 0) {
+                const top = state.leaderboard[0];
+                document.getElementById('champName').innerText = top.name;
+                document.getElementById('champScore').innerHTML = `Record: <strong>${top.score} Farts</strong>`;
+            }
+
+            // Daily reward claim
+            const dailyBtn = document.getElementById('claimDailyBtn');
+            const today = new Date().toISOString().split('T')[0];
+            if (state.lastDailyReward === today) {
+                dailyBtn.innerText = 'CLAIMED TODAY ✓';
+                dailyBtn.disabled = true;
+                dailyBtn.classList.remove('btn-primary');
+                dailyBtn.classList.add('btn-outline');
+            } else {
+                dailyBtn.addEventListener('click', () => {
+                    const res = window.gameState.claimDailyReward();
+                    if (res.success) {
+                        dailyBtn.innerText = 'CLAIMED TODAY ✓';
+                        dailyBtn.disabled = true;
+                        dailyBtn.classList.remove('btn-primary');
+                        dailyBtn.classList.add('btn-outline');
+                        window.fartAudio.playCoin();
+                        alert(`🎉 You received ${res.reward} Fart Coins!`);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

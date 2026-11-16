@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Shop - Adhithyan Fart Bird</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="arcade-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span>💨</span> ADHITHYAN FART BIRD
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+                <li><a href="play.html" class="nav-link">🎮 Play</a></li>
+                <li><a href="leaderboard.html" class="nav-link">🏆 High Scores</a></li>
+                <li><a href="characters.html" class="nav-link">👕 Locker</a></li>
+                <li><a href="shop.html" class="nav-link active">🛒 Shop</a></li>
+                <li><a href="achievements.html" class="nav-link">🎖️ Badges</a></li>
+                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="coin-chip">
+                    🪙 <span class="user-coin-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE WRAPPER -->
+    <div class="page-wrapper">
+        <div class="page-header">
+            <h1 class="page-title">🛒 Arcade Shop &amp; Upgrades</h1>
+            <p class="page-subtitle">Upgrade power-ups and equip custom exhaust trails to leave spectacular fumes across the skies!</p>
+        </div>
+
+        <!-- SECTION 1: TRAIL EFFECTS -->
+        <h2 class="page-title" style="font-size: 1.6rem; color: var(--accent); margin-bottom: 16px;">✨ Particle Exhaust Trails</h2>
+        <div class="grid-4" id="trailsGrid" style="margin-bottom: 40px;">
+            <!-- Populated via JS -->
+        </div>
+
+        <!-- SECTION 2: POWER-UP UPGRADES -->
+        <h2 class="page-title" style="font-size: 1.6rem; color: var(--primary); margin-bottom: 16px;">⚡ Power-Up Laboratory</h2>
+        <div class="grid-3">
+            
+            <!-- TACO OVERDRIVE UPGRADE -->
+            <div class="arcade-card">
+                <div style="font-size: 3rem; margin-bottom: 8px;">🌮</div>
+                <h3 class="item-title">Mega Taco Overdrive</h3>
+                <p class="item-desc">Extends the duration of fire invincibility and smash-through power.</p>
+                <div style="margin-bottom: 15px; font-weight: bold; color: var(--accent);" id="tacoDurationLabel">
+                    Current: 3.5 Seconds
+                </div>
+                <button class="btn btn-gold btn-sm" style="width: 100%;" id="upgradeTacoBtn">
+                    UPGRADE +1.0s (🪙 80)
+                </button>
+            </div>
+
+            <!-- SHIELD POWER UPGRADE -->
+            <div class="arcade-card">
+                <div style="font-size: 3rem; margin-bottom: 8px;">🧯</div>
+                <h3 class="item-title">Reinforced Gas Mask</h3>
+                <p class="item-desc">Strengthens structural shielding against sudden pipe impact shocks.</p>
+                <div style="margin-bottom: 15px; font-weight: bold; color: var(--info);">
+                    Shield Capacity: 1 Crash Absorption
+                </div>
+                <button class="btn btn-primary btn-sm" style="width: 100%;" disabled>
+                    MAX LEVEL REACHED ✓
+                </button>
+            </div>
+
+            <!-- COIN MAGNET UPGRADE -->
+            <div class="arcade-card">
+                <div style="font-size: 3rem; margin-bottom: 8px;">🧲</div>
+                <h3 class="item-title">Fart Coin Magnet</h3>
+                <p class="item-desc">Increases the gravitational pull radius to suck in floating coins.</p>
+                <div style="margin-bottom: 15px; font-weight: bold; color: var(--accent);" id="magnetRangeLabel">
+                    Current Radius: 75px
+                </div>
+                <button class="btn btn-gold btn-sm" style="width: 100%;" id="upgradeMagnetBtn">
+                    UPGRADE +35px (🪙 60)
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="arcade-footer">
+        <p><strong>💨 Adhithyan Fart Bird</strong> • Arcade Shop</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="js/state.js"></script>
+    <script src="js/audio.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTrails();
+            initUpgrades();
+        });
+
+        function renderTrails() {
+            const grid = document.getElementById('trailsGrid');
+            grid.innerHTML = '';
+
+            const state = window.gameState.data;
+            const trails = state.trails;
+            const equippedId = state.equippedTrail;
+
+            const trailIcons = {
+                smoke: '💨',
+                rainbow: '🌈',
+                fire: '🔥',
+                glitter: '✨'
+            };
+
+            Object.values(trails).forEach(trail => {
+                const isEquipped = trail.id === equippedId;
+                const card = document.createElement('div');
+                card.className = `item-card ${isEquipped ? 'equipped' : ''}`;
+
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = `<button class="btn btn-primary btn-sm" disabled style="width: 100%;">EQUIPPED ✓</button>`;
+                } else if (trail.unlocked) {
+                    btnHtml = `<button class="btn btn-outline btn-sm" style="width: 100%;" onclick="equipTrail('${trail.id}')">EQUIP</button>`;
+                } else {
+                    btnHtml = `
+                        <button class="btn btn-gold btn-sm" style="width: 100%;" onclick="buyTrail('${trail.id}')">
+                            UNLOCK (🪙 ${trail.price})
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="item-icon-box">${trailIcons[trail.id] || '💨'}</div>
+                        <h4 class="item-title">${trail.name}</h4>
+                        <p class="item-desc">${trail.desc}</p>
+                    </div>
+                    <div>${btnHtml}</div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function equipTrail(id) {
+            window.gameState.data.equippedTrail = id;
+            window.gameState.save();
+            window.fartAudio.playFart();
+            renderTrails();
+        }
+
+        function buyTrail(id) {
+            const trail = window.gameState.data.trails[id];
+            if (!trail) return;
+
+            if (window.gameState.spendCoins(trail.price)) {
+                trail.unlocked = true;
+                window.gameState.data.equippedTrail = id;
+                window.gameState.checkAchievement('shopper', true);
+                window.gameState.save();
+                window.fartAudio.playFanfare();
+                alert(`🎉 You unlocked and equipped ${trail.name}!`);
+                renderTrails();
+            } else {
+                alert(`❌ Not enough Fart Coins! You need ${trail.price} coins, but have ${window.gameState.data.coins}.`);
+            }
+        }
+
+        function initUpgrades() {
+            const state = window.gameState.data;
+            const tacoLabel = document.getElementById('tacoDurationLabel');
+            const tacoBtn = document.getElementById('upgradeTacoBtn');
+            const magnetLabel = document.getElementById('magnetRangeLabel');
+            const magnetBtn = document.getElementById('upgradeMagnetBtn');
+
+            tacoLabel.innerText = `Current: ${(state.upgrades.tacoBlastDuration || 3.5).toFixed(1)} Seconds`;
+            magnetLabel.innerText = `Current Radius: ${state.upgrades.magnetRange || 75}px`;
+
+            tacoBtn.addEventListener('click', () => {
+                if (window.gameState.spendCoins(80)) {
+                    state.upgrades.tacoBlastDuration = (state.upgrades.tacoBlastDuration || 3.5) + 1.0;
+                    window.gameState.save();
+                    window.fartAudio.playFanfare();
+                    tacoLabel.innerText = `Current: ${state.upgrades.tacoBlastDuration.toFixed(1)} Seconds`;
+                    alert('🌮 Taco Overdrive duration upgraded!');
+                } else {
+                    alert('❌ Need 80 Fart Coins to upgrade!');
+                }
+            });
+
+            magnetBtn.addEventListener('click', () => {
+                if (window.gameState.spendCoins(60)) {
+                    state.upgrades.magnetRange = (state.upgrades.magnetRange || 75) + 35;
+                    window.gameState.save();
+                    window.fartAudio.playFanfare();
+                    magnetLabel.innerText = `Current Radius: ${state.upgrades.magnetRange}px`;
+                    alert('🧲 Coin Magnet pull radius upgraded!');
+                } else {
+                    alert('❌ Need 60 Fart Coins to upgrade!');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
